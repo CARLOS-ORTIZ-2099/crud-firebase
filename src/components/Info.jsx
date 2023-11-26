@@ -1,9 +1,9 @@
-
 import { useEffect, useState } from 'react'
 import {db} from '../firebase/firebase'
 import {collection, addDoc, getDocs, getDoc ,doc ,updateDoc, deleteDoc} from 'firebase/firestore'
 import { Charging } from './Charging'
-
+import { FormData } from './FormData'
+import { DataProducts } from './DataProducts'
 
 const initial = {product:'', description:'', price:''}
 export const Info = () => {
@@ -25,9 +25,7 @@ export const Info = () => {
         }
     }
 
-    const changeFields = (e) => {
-        setDatos({...datos, [e.target.name]: e.target.value})
-    }
+    const changeFields = (e) => setDatos({...datos, [e.target.name]: e.target.value})
     // crear datos en firestore
     const handleOnSubmit = async (e) => {
         e.preventDefault()
@@ -48,8 +46,7 @@ export const Info = () => {
     }
 
     // eliminar datos de firestore
-    const deleteProduct = async (id) => {
-         
+    const deleteProduct = async (id) => {      
         try {
             const deleteRef = doc(db, 'products',id)
             await deleteDoc(deleteRef);
@@ -79,7 +76,6 @@ export const Info = () => {
         }
     }
 
-
     useEffect(() => {
         chargeProducts()
     }, [])
@@ -88,43 +84,10 @@ if(products == null){
     return <Charging/>
 }
   return (
-    <section>
-            <h1>agrega productos</h1>
-            <form onSubmit={handleOnSubmit} action="">
-                <label htmlFor="product">producto</label>
-                <input onChange={changeFields} type="text" id='product' name='product' />
-
-                <label htmlFor="price">price</label>
-                <input onChange={changeFields} type="text" id='price' name='price' />
-
-                <label htmlFor="description">description</label>
-                <textarea onChange={changeFields} name="description" id="description" cols="10" rows="3"></textarea>
-
-               <input type="submit" value='enviar' />
-            </form>
-                {
-                    products.length < 1? <span>sin datos aun</span>:
-                    products?.map((product) => (
-                        <div key={product?.id}>
-                            {
-                                edit == product.id ?
-                                <form onSubmit={(e) => saveChange(product.id,e)}>
-                                    <input  name='product' type="text" placeholder='cambiar dato' defaultValue={product.product}/>
-                                    <input  name='price' type="text" placeholder='cambiar dato' defaultValue={product.price}/>
-                                    <textarea name="description" defaultValue={product.description}  id="" cols="30" rows="10"></textarea>
-                                    <button >guardar</button>
-                                </form>:
-                                <>
-                                <h2>{product?.product}</h2>
-                                <h2>{product?.price}</h2>
-                                <h2>{product?.description}</h2>
-                                <button onClick={() => deleteProduct(product.id)}>eliminar</button>
-                                <button onClick={(e) => editproduct(product.id,e)}>editar</button>
-                                </>
-                            }
-                        </div>
-                    ))
-                }
+    <section className='container'>
+            <h1 className='text-center text-capitalize m-5'>agrega productos</h1>
+            <FormData handleOnSubmit={handleOnSubmit} changeFields={changeFields}/>
+            <DataProducts products={products} saveChange= {saveChange} edit={edit} editproduct={editproduct} deleteProduct={deleteProduct}/>   
     </section>
   )
 }

@@ -2,7 +2,7 @@ import {Triangle} from 'react-loader-spinner'
 
 export const Charging = () => {
   return (
-    <div>
+    <div className='mx-auto charging'>
         <Triangle
             height="80"
             width="80"
